@@ -7,7 +7,7 @@ from sqlalchemy.orm import relationship
 import datetime
 import os
 
-host = os.getenv('DATEBASE_URL') or 'sqlite:///:memory:'
+host = os.getenv('DATABASE_URL') or 'sqlite:///:memory:'
 
 engine = create_engine(host)
 Base = declarative_base()

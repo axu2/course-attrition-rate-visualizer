@@ -3,14 +3,19 @@ import datetime
 from bs4 import BeautifulSoup
 from course import Enrollment, db
 
-
-url = "https://registrar.princeton.edu/course-offerings/search_results.xml?submit=Search&term=1192&coursetitle=&instructor=&distr_area=&level=&cat_number=&subject=COS&sort=SYN_PS_PU_ROXEN_SOC_VW.SUBJECT%2C+SYN_PS_PU_ROXEN_SOC_VW.CATALOG_NBR%2CSYN_PS_PU_ROXEN_SOC_VW.CLASS_SECTION%2CSYN_PS_PU_ROXEN_SOC_VW.CLASS_MTG_NBR"
+url = "https://registrar.princeton.edu/course-offerings/search_results.xml?submit=Search&term=1192"
 html = requests.get(url).text
 soup = BeautifulSoup(html, 'html.parser')
 
-for row in soup.table.findAll('tr')[1:]:
-    cols = [list(col.stripped_strings) for col in row.findAll('td')]
-    enroll = Enrollment(date=datetime.date.today(), enroll=cols[8][0], course_id=cols[0][0])
-    db.session.add(enroll)
+if __name__ == '__main__':
 
-db.session.commit()
+    seen = set()
+
+    for row in soup.table.findAll('tr')[1:]:
+        cols = [list(col.stripped_strings) for col in row.findAll('td')]
+        id = cols[0][0]
+        if id not in seen:
+            enroll = Enrollment(date=datetime.date.today(), enroll=cols[8][0], course_id=id)
+            db.session.add(enroll)
+
+    db.session.commit()

@@ -11,7 +11,7 @@ soup = BeautifulSoup(html, 'html.parser')
 
 for row in soup.table.findAll('tr')[1:]:
     cols = [list(col.stripped_strings) for col in row.findAll('td')]
-    enroll = Enrollment(date=datetime.date.today(), enroll=cols[9][0], course_id=cols[0][1])
+    enroll = Enrollment(date=datetime.date.today(), enroll=cols[9][0], course_id=cols[0][0])
     session.add(enroll)
 
 session.commit()

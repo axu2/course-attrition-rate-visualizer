@@ -56,7 +56,7 @@ if __name__ == '__main__':
 
     for row in soup.table.findAll('tr')[1:]:
         cols = [list(col.stripped_strings) for col in row.findAll('td')]
-        course = Course(id=cols[0][0], code=cols[1][0], title=cols[2][0], max=cols[8][0])
+        course = Course(id=cols[0][0], code=cols[1][0], title=cols[2][0], max=cols[8][1])
         session.add(course)
 
     session.commit()

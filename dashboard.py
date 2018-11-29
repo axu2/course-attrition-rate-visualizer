@@ -7,6 +7,7 @@ from datetime import datetime as dt
 from course import Course, Enrollment, Session
 
 app = dash.Dash()
+server = app.server
 
 session = Session()
 

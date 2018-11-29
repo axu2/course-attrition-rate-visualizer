@@ -1,5 +1,8 @@
 bs4==0.0.1
 dash==0.30.0
+dash-html-components==0.13.2
+dash-core-components==0.38.0
+dash-table==3.1.7
 Flask-SQLAlchemy==2.3.2
 gunicorn==19.9.0
 psycopg2-binary==2.7.5

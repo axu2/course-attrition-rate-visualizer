@@ -6,50 +6,49 @@ from sqlalchemy import ForeignKey
 from sqlalchemy.orm import relationship
 import datetime
 import os
-from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
-import dash
 
-app = dash.Dash()
-app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL') or 'sqlite:///:memory:'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db = SQLAlchemy(app)
+host = os.getenv('DATABASE_URL') or 'sqlite:////tmp/test.db'
 
-class Course(db.Model):
+engine = create_engine(host)
+Base = declarative_base()
+Session = sessionmaker(bind=engine)
+
+class Course(Base):
     __tablename__ = 'courses'
 
-    id = db.Column(db.Integer, primary_key=True)
+    id = Column(Integer, primary_key=True)
 
-    dept = db.Column(db.String(3))
-    num = db.Column(db.String(4))
-    title = db.Column(db.String)
+    dept = Column(String(3))
+    num = Column(String(4))
+    title = Column(String)
 
-    max = db.Column(Integer)
+    max = Column(Integer)
 
     def __repr__(self):
         return "<Course(code={})>".format(self.dept + " " + self.num)
 
-class Enrollment(db.Model):
+class Enrollment(Base):
     __tablename__ = 'enrollments'
 
-    id = db.Column(db.Integer, primary_key=True)
-    date = db.Column(db.Date)
-    enroll = db.Column(db.Integer)
+    id = Column(Integer, primary_key=True)
+    date = Column(Date)
+    enroll = Column(Integer)
 
-    course_id = db.Column(db.Integer, db.ForeignKey('courses.id'))
+    course_id = Column(Integer, ForeignKey('courses.id'))
 
-    course = db.relationship("Course", back_populates="enrollments")
+    course = relationship("Course", back_populates="enrollments")
 
     def __repr__(self):
         return "<Enrollment(course={} {}, date={}, enroll={})>".format(self.course.dept, self.course.num, self.date, self.enroll)
 
-Course.enrollments = db.relationship("Enrollment", order_by=Enrollment.id, back_populates="course")
+Course.enrollments = relationship("Enrollment", order_by=Enrollment.id, back_populates="course")
 
-db.create_all()
+Base.metadata.create_all(engine)
 
 def main():
     from enroll import soup
 
+    session = Session()
     seen = set()
 
     for row in soup.table.findAll('tr')[1:]:
@@ -62,10 +61,10 @@ def main():
                 max_enroll = cols[9][0]
 
             course = Course(id=cols[0][0], dept=dept, num=num, title=cols[2][0], max=max_enroll)
-            db.session.add(course)
+            session.add(course)
             seen.add(id)
 
-    db.session.commit()
+    session.commit()
 
 if __name__ == '__main__':
     main()

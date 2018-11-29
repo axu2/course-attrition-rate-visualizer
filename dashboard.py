@@ -2,13 +2,16 @@ import dash
 from dash.dependencies import Input, Output
 import dash_core_components as dcc
 import dash_html_components as html
-from pandas_datareader import data as web
 from datetime import datetime as dt
 
-from course import Course, Enrollment, app
+from course import Course, Enrollment, Session
+
+app = dash.Dash()
+
+session = Session()
 
 options = []
-for course in Course.query.all():
+for course in session.query(Course).all():
     name = course.dept + " " + course.num
     options.append({'label': name, 'value': str(course.id)})
 
@@ -28,7 +31,7 @@ def update_graph(course_id):
     y = []
     seen = set()
     course_id = int(course_id)
-    for e in Enrollment.query.filter_by(course_id=course_id).all():
+    for e in session.query(Enrollment).filter_by(course_id=course_id).all():
         if e.date not in seen:
             seen.add(e.date)
             x.append(e.date)

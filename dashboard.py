@@ -14,14 +14,14 @@ session = Session()
 options = []
 for course in session.query(Course).all():
     name = course.dept + " " + course.num
-    options.append({'label': name, 'value': str(course.id)})
+    options.append({'label': name, 'value': course.id})
 
 app.layout = html.Div([
     html.H1('Course Enrollments'),
     dcc.Dropdown(
         id='my-dropdown',
         options=options,
-        value='21276'
+        value=21276
     ),
     dcc.Graph(id='my-graph')
 ])
@@ -31,7 +31,6 @@ def update_graph(course_id):
     x = []
     y = []
     seen = set()
-    course_id = int(course_id)
     for e in session.query(Enrollment).filter_by(course_id=course_id).all():
         if e.date not in seen:
             seen.add(e.date)

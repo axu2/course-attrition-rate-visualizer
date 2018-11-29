@@ -8,8 +8,9 @@ import datetime
 import os
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+import dash
 
-app = Flask(__name__)
+app = dash.Dash()
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL') or 'sqlite:///:memory:'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)

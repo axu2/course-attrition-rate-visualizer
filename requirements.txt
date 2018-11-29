@@ -1,5 +1,5 @@
 bs4==0.0.1
-dash
+dash==0.30.0
 Flask-SQLAlchemy==2.3.2
 gunicorn==19.9.0
 psycopg2-binary==2.7.5

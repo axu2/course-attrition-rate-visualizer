@@ -9,7 +9,7 @@ from course import Course, Enrollment, app
 
 options = []
 for course in Course.query.all():
-    name = course.dept + " " course.num
+    name = course.dept + " " + course.num
     options.append({'label': name, 'value': str(course.id)})
 
 app.layout = html.Div([

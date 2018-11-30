@@ -5,7 +5,7 @@ from course import Course, Enrollment, app
 @app.route("/dept/<dept>")
 def dept(dept):
     ret = []
-    for c in Course.query.filter_by(dept=dept).all():
+    for c in Course.query.all():
         ret.append({
             'label' : c.dept + " " + c.num + ": " + c.title,
             'value' : c.id

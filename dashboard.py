@@ -2,17 +2,19 @@ import dash
 from dash.dependencies import Input, Output
 import dash_core_components as dcc
 import dash_html_components as html
+from datetime import datetime as dt
 
-from dateutil.parser import parse
-
-from course import Course, Enrollment
-import requests
+from course import Course, Enrollment, Session
 
 app = dash.Dash()
 server = app.server
 
-url = "https://when-to-drop-api.herokuapp.com/dept/COS"
-options = requests.get(url).json()
+session = Session()
+
+options = []
+for course in session.query(Course).all():
+    name = course.dept + " " + course.num
+    options.append({'label': name, 'value': course.id})
 
 app.layout = html.Div([
     html.H1('Course Enrollments'),
@@ -26,11 +28,14 @@ app.layout = html.Div([
 
 @app.callback(Output('my-graph', 'figure'), [Input('my-dropdown', 'value')])
 def update_graph(course_id):
-    url = "https://when-to-drop-api.herokuapp.com/enroll/" + str(course_id)
-    data = requests.get(url).json()
-
-    x = [parse(d) for d in data['x']]
-    y = data['y']
+    x = []
+    y = []
+    seen = set()
+    for e in session.query(Enrollment).filter_by(course_id=course_id).all():
+        if e.date not in seen:
+            seen.add(e.date)
+            x.append(e.date)
+            y.append(e.enroll)
 
     return {
         'data': [{
